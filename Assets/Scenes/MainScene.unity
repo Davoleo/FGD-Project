@@ -688,9 +688,11 @@ MonoBehaviour:
   acceleration: 15
   deceleration: 10
   stepAngle: 90
+  jumpForce: 15
   moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   rotateLeftAction: {fileID: 8917293988593085363, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   rotateRightAction: {fileID: -4900404479571499014, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  jump: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
