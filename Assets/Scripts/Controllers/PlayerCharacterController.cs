@@ -212,8 +212,7 @@ namespace Controllers
         private void HandleGroundedVelocity(ref Vector3 currentVelocity, float deltaTime)
         {
             // Reorient current velocity to the slope normal so speed is preserved on ramps.
-            currentVelocity = motor.GetDirectionTangentToSurface(currentVelocity, motor.GroundingStatus.GroundNormal);
-                              //TODO: keep it or not: * currentVelocity.magnitude;
+            currentVelocity = motor.GetDirectionTangentToSurface(currentVelocity, motor.GroundingStatus.GroundNormal) * currentVelocity.magnitude;
 
             if (_jumpRequested)
             {
