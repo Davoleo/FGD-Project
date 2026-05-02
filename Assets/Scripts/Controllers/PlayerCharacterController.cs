@@ -56,10 +56,12 @@ namespace Controllers
         [SerializeField] private float stepAngle        = 90f;
         [SerializeField] private float rotationDuration = 0.3f;
 
-        // ── Public state ── TODO: Give it to PlayerAnimationController to consume the state ────────
-        public CharacterState CurrentState { get; private set; }
-        public bool  IsGrounded        => motor.GroundingStatus.IsStableOnGround;
-        public float MovementMagnitude => new Vector3(motor.Velocity.x, 0f, motor.Velocity.z).magnitude;
+        // ── Public state (consumed by PlayerAnimationController) ─────────────────
+        public event System.Action OnJumped;
+        public CharacterState CurrentState  { get; private set; }
+        public bool  IsGrounded    => motor.GroundingStatus.IsStableOnGround;
+        public float ForwardSpeed  => Vector3.Dot(motor.Velocity, motor.CharacterForward);
+        public float VerticalSpeed => Vector3.Dot(motor.Velocity, motor.CharacterUp);
 
         // ── Input cache ───────────────────────────────────────────────────────────
         private PlayerInputs _inputs;
@@ -219,6 +221,7 @@ namespace Controllers
                 motor.ForceUnground();  // tells KCC to stop snapping to ground this frame
                 currentVelocity += (jumpUpSpeed * motor.CharacterUp)
                                    - Vector3.Project(currentVelocity, motor.CharacterUp);
+                OnJumped?.Invoke();
                 // State transition to Airborne happens in PostGroundingUpdate automatically.
                 return;
             }
