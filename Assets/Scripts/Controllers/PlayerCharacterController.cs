@@ -29,6 +29,7 @@ namespace Controllers
     /// </summary>
     public class PlayerCharacterController : MonoBehaviour, ICharacterController
     {
+        private Projectiles.ArrowLauncher _arrowLauncher;
         [Header("References")]
         public KinematicCharacterMotor motor;
 
@@ -70,6 +71,7 @@ namespace Controllers
         // This bridges the Update/FixedUpdate timing gap so no input is ever dropped.
         private bool  _jumpRequested;
         private bool  _dashRequested;
+        private bool  _shootRequested;
         private float _pendingRotationInput;   // -1, 0, +1 — cleared after StartRotation()
 
         // ── Rotation ──────────────────────────────────────────────────────────────
@@ -77,13 +79,13 @@ namespace Controllers
         private float _rotationTimer;
         private float _currentYAngle;
         private float _targetYAngle;
-    
+        
         // ─────────────────────────────────────────────────────────────────────────
         private void Start()
         {
-            // Register this controller with the motor so it receives callbacks.
             motor.CharacterController = this;
             TransitionToState(CharacterState.Grounded);
+            _arrowLauncher = GetComponent<Projectiles.ArrowLauncher>();
         }
 
         /// <summary>
@@ -97,6 +99,7 @@ namespace Controllers
 
             if (inputs.JumpPressed)  _jumpRequested        = true;
             if (inputs.DashPressed)  _dashRequested        = true;
+            if (inputs.ShootPressed) _shootRequested      = true;
             if (inputs.RotationInput != 0f) _pendingRotationInput = inputs.RotationInput;
         }
 
@@ -205,8 +208,16 @@ namespace Controllers
         public void AfterCharacterUpdate(float deltaTime)
         {
             // Clear latched flags AFTER the motor has consumed them this frame.
-            _jumpRequested = false;
-            _dashRequested = false;
+            _jumpRequested  = false;
+            _dashRequested  = false;
+            if (_shootRequested)
+            {
+                if (_arrowLauncher != null)
+                    _arrowLauncher.TryLaunch(motor.CharacterForward);
+                else
+                    Debug.LogError("ArrowLauncher component missing on " + gameObject.name, this);
+                _shootRequested = false;
+            }
         }
 
         // ── Velocity handlers ─────────────────────────────────────────────────────

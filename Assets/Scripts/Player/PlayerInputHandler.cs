@@ -21,7 +21,8 @@ namespace Player
         [SerializeField] private InputActionReference rotateLeftAction;
         [SerializeField] private InputActionReference rotateRightAction;
         [SerializeField] private InputActionReference jumpAction;
-        [SerializeField] private InputActionReference dashAction;   // add a "Dash" action to your Input Actions asset
+        [SerializeField] private InputActionReference dashAction;
+        [SerializeField] private InputActionReference shootAction;
     
         private Transform _cameraTransform;
 
@@ -37,6 +38,7 @@ namespace Player
             rotateRightAction.action.Enable();
             jumpAction.action.Enable();
             if (dashAction != null) dashAction.action.Enable();
+            shootAction.action.Enable();
         }
 
         private void OnDisable()
@@ -46,6 +48,7 @@ namespace Player
             rotateRightAction.action.Disable();
             jumpAction.action.Disable();
             dashAction.action.Disable();
+            shootAction.action.Disable();
         }
 
         private void Update()
@@ -68,6 +71,7 @@ namespace Player
                 RotationInput = rotateLeftAction.action.triggered  ? -1f
                     : rotateRightAction.action.triggered ? +1f : 0f,
                 DashPressed   = dashAction.action.triggered,
+                ShootPressed  = shootAction.action.WasPressedThisFrame(),
             };
 
             characterController.SetInputs(ref inputs);
