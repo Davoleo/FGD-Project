@@ -6,7 +6,7 @@ namespace Player
     public class PlayerAnimationController : MonoBehaviour
     {
         [SerializeField] private PlayerCharacterController characterController;
-        [SerializeField] private Animator animator;
+        private Animator animator;
 
         private static readonly int SpeedHash          = Animator.StringToHash("Speed");
         private static readonly int GroundedHash       = Animator.StringToHash("Grounded");
@@ -14,6 +14,11 @@ namespace Player
         private static readonly int DashHash           = Animator.StringToHash("Dash");
         private static readonly int JumpHash           = Animator.StringToHash("Jump");
         private static readonly int VerticalSpeedHash  = Animator.StringToHash("VerticalSpeed");
+
+        private void Start()
+        {
+            animator = gameObject.GetComponent<Animator>();
+        }
 
         private void OnEnable()
         {

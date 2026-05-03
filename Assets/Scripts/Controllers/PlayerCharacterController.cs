@@ -79,7 +79,7 @@ namespace Controllers
         private float _rotationTimer;
         private float _currentYAngle;
         private float _targetYAngle;
-        
+
         // ─────────────────────────────────────────────────────────────────────────
         private void Start()
         {
@@ -207,6 +207,7 @@ namespace Controllers
 
         public void AfterCharacterUpdate(float deltaTime)
         {
+
             // Clear latched flags AFTER the motor has consumed them this frame.
             _jumpRequested  = false;
             _dashRequested  = false;

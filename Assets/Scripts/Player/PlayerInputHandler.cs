@@ -13,8 +13,7 @@ namespace Player
     /// </summary>
     public class PlayerInputHandler : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private PlayerCharacterController characterController;
+        private PlayerCharacterController characterController;
 
         [Header("Input Actions")]
         [SerializeField] private InputActionReference moveAction;
@@ -28,6 +27,7 @@ namespace Player
 
         private void Start()
         {
+            characterController = gameObject.GetComponent<PlayerCharacterController>();
             _cameraTransform = GameObject.Find("PlayerCamera").transform; 
         }
 
