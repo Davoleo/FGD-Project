@@ -9,6 +9,7 @@ namespace Controllers
         Grounded,
         Airborne,
         Dashing,    // not yet implemented — read HandleDashVelocity for step-by-step guidance
+        Climbing,
     }
 
     /// <summary>
@@ -44,7 +45,7 @@ namespace Controllers
 
         [Header("Jump")]
         [SerializeField] private float jumpUpSpeed = 5f;
-    
+
         [Header("Dash")]
         [SerializeField] private float dashSpeed    = 30f;
         [SerializeField] private float dashDuration = 0.2f; // seconds
@@ -105,7 +106,7 @@ namespace Controllers
 
         // ── State machine ─────────────────────────────────────────────────────────
 
-        private void TransitionToState(CharacterState newState)
+        public void TransitionToState(CharacterState newState)
         {
             OnStateExit(CurrentState, newState);
             CurrentState = newState;
@@ -127,6 +128,8 @@ namespace Controllers
                     if (_dashDirection == Vector3.zero) _dashDirection = motor.CharacterForward;
                     _dashDurationTimer = dashDuration;
                     break;
+                case CharacterState.Climbing:
+                    break;
             }
         }
 
@@ -143,6 +146,8 @@ namespace Controllers
                 case CharacterState.Dashing:
                     // TODO: set character velocity to zero if entering Airborne state
                     break;
+                case CharacterState.Climbing:
+                    break;
             }
         }
 
@@ -152,7 +157,7 @@ namespace Controllers
         {
             // ── ROTATION ──
             HandleRotationInput();
-            
+
             // ── DASH ──
             if (_dashRequested && _dashCooldownTimer <= 0f && CurrentState != CharacterState.Dashing)
             {
@@ -175,7 +180,7 @@ namespace Controllers
             currentRotation = Quaternion.Euler(0f, newY, 0f);
 
             if (_rotationTimer < 1f) return;
-            
+
             _isRotating    = false;
             _targetYAngle  = Mathf.Round(_targetYAngle / stepAngle) * stepAngle;
         }
@@ -187,6 +192,7 @@ namespace Controllers
                 case CharacterState.Grounded: HandleGroundedVelocity(ref currentVelocity, deltaTime); break;
                 case CharacterState.Airborne: HandleAirborneVelocity(ref currentVelocity, deltaTime); break;
                 case CharacterState.Dashing:  HandleDashVelocity(ref currentVelocity, deltaTime);     break;
+                case CharacterState.Climbing: HandleClimbVelocity(ref currentVelocity, deltaTime);    break;
             }
         }
 
@@ -199,6 +205,7 @@ namespace Controllers
                 case true when CurrentState == CharacterState.Airborne:
                     TransitionToState(CharacterState.Grounded);
                     break;
+
                 case false when CurrentState == CharacterState.Grounded:
                     TransitionToState(CharacterState.Airborne);
                     break;
@@ -270,6 +277,23 @@ namespace Controllers
                     : CharacterState.Airborne);
         }
 
+        private void HandleClimbVelocity(ref Vector3 currentVelocity, float deltaTime)
+        {
+            var climbInput = _inputs.ClimbInput.y;
+            var moveInput = _inputs.MoveInput.x;
+            var jumpInput = _inputs.JumpPressed;
+
+            //transform.Rotate(Vector3.up, transform.rotation.y - );
+            //motor.RotateCharacter();
+            currentVelocity.y = climbInput;
+
+            if (moveInput > 0.01F || jumpInput)
+            {
+                Debug.Log("transition in handleclimbvelocity");
+                TransitionToState(motor.GroundingStatus.IsStableOnGround ? CharacterState.Grounded : CharacterState.Airborne);
+            }
+        }
+
         // ── Shared helpers ────────────────────────────────────────────────────────
 
         private Vector3 ComputeMoveDirection()
@@ -284,13 +308,19 @@ namespace Controllers
         {
             if (_isRotating || _pendingRotationInput == 0f) return;
 
-            if (_pendingRotationInput < 0f) _targetYAngle -= stepAngle;
-            else _targetYAngle += stepAngle;
+            Debug.Log(_pendingRotationInput);
+
+            _targetYAngle += (stepAngle * _pendingRotationInput); // * _pendingRotationInput is used to rotate by 180° if _pendingRotationInput = 2 is passed
 
             _currentYAngle       = motor.TransientRotation.eulerAngles.y;
             _rotationTimer       = 0f;
             _isRotating          = true;
             _pendingRotationInput = 0f;   // consumed
+        }
+
+        public void SetPendingRotationInput(int pendingRotation)
+        {
+            _pendingRotationInput = pendingRotation;
         }
 
         // ── Unused required ICharacterController methods ──────────────────────────

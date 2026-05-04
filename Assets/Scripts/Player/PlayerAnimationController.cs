@@ -14,6 +14,7 @@ namespace Player
         private static readonly int DashHash           = Animator.StringToHash("Dash");
         private static readonly int JumpHash           = Animator.StringToHash("Jump");
         private static readonly int VerticalSpeedHash  = Animator.StringToHash("VerticalSpeed");
+        private static readonly int ClimbHash          = Animator.StringToHash("Climbing");
 
         private void Start()
         {
@@ -43,6 +44,7 @@ namespace Player
             animator.SetBool(GroundedHash,       isGrounded);
             animator.SetBool(AirborneHash,       !isGrounded);
             animator.SetBool(DashHash,           characterController.CurrentState == CharacterState.Dashing);
+            animator.SetBool(ClimbHash,          characterController.CurrentState == CharacterState.Climbing);
         }
     }
 }

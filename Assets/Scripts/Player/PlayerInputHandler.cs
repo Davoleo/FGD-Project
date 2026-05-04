@@ -22,6 +22,7 @@ namespace Player
         [SerializeField] private InputActionReference jumpAction;
         [SerializeField] private InputActionReference dashAction;
         [SerializeField] private InputActionReference shootAction;
+        [SerializeField] private InputActionReference climbAction;
     
         private Transform _cameraTransform;
 
@@ -39,6 +40,7 @@ namespace Player
             jumpAction.action.Enable();
             if (dashAction != null) dashAction.action.Enable();
             shootAction.action.Enable();
+            climbAction.action.Enable();
         }
 
         private void OnDisable()
@@ -49,6 +51,7 @@ namespace Player
             jumpAction.action.Disable();
             dashAction.action.Disable();
             shootAction.action.Disable();
+            climbAction.action.Disable();
         }
 
         private void Update()
@@ -72,6 +75,7 @@ namespace Player
                     : rotateRightAction.action.triggered ? +1f : 0f,
                 DashPressed   = dashAction.action.triggered,
                 ShootPressed  = shootAction.action.WasPressedThisFrame(),
+                ClimbInput    = climbAction.action.ReadValue<Vector2>()
             };
 
             characterController.SetInputs(ref inputs);
