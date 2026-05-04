@@ -1,5 +1,6 @@
 using KinematicCharacterController;
 using Player;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Controllers
@@ -38,7 +39,7 @@ namespace Controllers
         [SerializeField] private float maxMoveSpeed       = 5f;
         [SerializeField] private float movementSharpness  = 15f;    // higher = snappier acceleration
 
-        [Header("Air Movement")]
+        [Header("Air Movement")] 
         [SerializeField] private float maxAirMoveSpeed  = 5f;
         [SerializeField] private float airAcceleration  = 5f;
         [SerializeField] private Vector3 gravity        = new Vector3(0f, -20f, 0f);
@@ -281,17 +282,36 @@ namespace Controllers
         {
             var climbInput = _inputs.ClimbInput.y;
             var moveInput = _inputs.MoveInput.x;
+            // TODO: implement jump during climbing state
             var jumpInput = _inputs.JumpPressed;
 
+            float xDirection = transform.forward.x;
+            float zDirection = transform.forward.z;
+
+            if (zDirection > 0f || xDirection > 0f)
+            {
+                if (moveInput > 0.01f || jumpInput)
+                {
+                    TransitionToState(motor.GroundingStatus.IsStableOnGround
+                        ? CharacterState.Grounded
+                        : CharacterState.Airborne);
+                }
+            }
+            else if (zDirection < 0f || xDirection < 0f)
+            {
+                if (moveInput < -0.01f || jumpInput)
+                {
+                    TransitionToState(motor.GroundingStatus.IsStableOnGround
+                        ? CharacterState.Grounded
+                        : CharacterState.Airborne);
+                }
+            }
+                
             //transform.Rotate(Vector3.up, transform.rotation.y - );
             //motor.RotateCharacter();
             currentVelocity.y = climbInput;
 
-            if (moveInput > 0.01F || jumpInput)
-            {
-                Debug.Log("transition in handleclimbvelocity");
-                TransitionToState(motor.GroundingStatus.IsStableOnGround ? CharacterState.Grounded : CharacterState.Airborne);
-            }
+
         }
 
         // ── Shared helpers ────────────────────────────────────────────────────────
