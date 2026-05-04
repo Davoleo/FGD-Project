@@ -1,6 +1,7 @@
+using System;
 using KinematicCharacterController;
 using Player;
-using Unity.VisualScripting;
+using Projectiles;
 using UnityEngine;
 
 namespace Controllers
@@ -31,7 +32,7 @@ namespace Controllers
     /// </summary>
     public class PlayerCharacterController : MonoBehaviour, ICharacterController
     {
-        private Projectiles.ArrowLauncher _arrowLauncher;
+        private ArrowLauncher _arrowLauncher;
         [Header("References")]
         public KinematicCharacterMotor motor;
 
@@ -60,7 +61,7 @@ namespace Controllers
         [SerializeField] private float rotationDuration = 0.3f;
 
         // ── Public state (consumed by PlayerAnimationController) ─────────────────
-        public event System.Action OnJumped;
+        public event Action OnJumped;
         public CharacterState CurrentState  { get; private set; }
         public bool  IsGrounded    => motor.GroundingStatus.IsStableOnGround;
         public float ForwardSpeed  => Vector3.Dot(motor.Velocity, motor.CharacterForward);
@@ -87,7 +88,7 @@ namespace Controllers
         {
             motor.CharacterController = this;
             TransitionToState(CharacterState.Grounded);
-            _arrowLauncher = GetComponent<Projectiles.ArrowLauncher>();
+            _arrowLauncher = GetComponent<ArrowLauncher>();
         }
 
         /// <summary>
