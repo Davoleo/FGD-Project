@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Checkpoint
   - GameManager
+  - Coins
+  - Keys
   layers:
   - Default
   - TransparentFX
