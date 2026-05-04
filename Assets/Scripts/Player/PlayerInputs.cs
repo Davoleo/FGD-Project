@@ -16,6 +16,7 @@ namespace Player
         public bool    DashPressed;     // placeholder — wire to a Dash action when ready
         public bool    ShootPressed;
         public Vector2 ClimbInput;
+        public bool InteractPressed;
     }
 }
 

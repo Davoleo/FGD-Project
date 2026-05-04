@@ -23,6 +23,8 @@ namespace Player
         [SerializeField] private InputActionReference dashAction;
         [SerializeField] private InputActionReference shootAction;
         [SerializeField] private InputActionReference climbAction;
+        // TODO improve input system so that it can be used with other objects (other than player)
+        public InputActionReference interactAction;
     
         private Transform _cameraTransform;
 
@@ -41,6 +43,7 @@ namespace Player
             if (dashAction != null) dashAction.action.Enable();
             shootAction.action.Enable();
             climbAction.action.Enable();
+            interactAction.action.Enable();
         }
 
         private void OnDisable()
@@ -52,6 +55,7 @@ namespace Player
             dashAction.action.Disable();
             shootAction.action.Disable();
             climbAction.action.Disable();
+            interactAction.action.Disable();
         }
 
         private void Update()
@@ -75,7 +79,8 @@ namespace Player
                     : rotateRightAction.action.triggered ? +1f : 0f,
                 DashPressed   = dashAction.action.triggered,
                 ShootPressed  = shootAction.action.WasPressedThisFrame(),
-                ClimbInput    = climbAction.action.ReadValue<Vector2>()
+                ClimbInput    = climbAction.action.ReadValue<Vector2>(),
+                InteractPressed = interactAction.action.triggered,
             };
 
             characterController.SetInputs(ref inputs);

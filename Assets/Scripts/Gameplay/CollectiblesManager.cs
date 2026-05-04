@@ -28,6 +28,7 @@ namespace Gameplay
         private void Start()
         {
             collectibles.coins = new List<GameObject>();
+            collectibles.keys = new List<GameObject>();
             collectibles.coins.AddRange(GameObject.FindGameObjectsWithTag("Coins"));
             collectibles.keys.AddRange(GameObject.FindGameObjectsWithTag("Keys"));
         }
@@ -42,6 +43,18 @@ namespace Gameplay
                     keys++;
                     break;
             }
+        }
+
+        /// <summary>
+        /// Use Key if the player has any, otherwise fails
+        /// </summary>
+        /// <returns>whether key use is successful or not</returns>
+        public bool UseKey()
+        {
+            if (keys <= 0) return false;
+
+            keys--;
+            return true;
         }
     }
 }
