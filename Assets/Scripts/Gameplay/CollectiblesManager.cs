@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,6 +45,13 @@ namespace Gameplay
                     break;
             }
         }
+
+        public int GetCount(CollectibleType type) => type switch
+        {
+            CollectibleType.Coin => coins,
+            CollectibleType.Key => keys,
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
 
         /// <summary>
         /// Use Key if the player has any, otherwise fails
